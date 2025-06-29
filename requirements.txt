@@ -10,3 +10,6 @@ pandas
 numpy
 requests
 aiocache
+pytest 
+pytest-asyncio 
+httpx
