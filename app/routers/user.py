@@ -3,9 +3,10 @@ from datetime import datetime
 from fastapi import APIRouter, HTTPException, Query
 from app.schemas import UserSummary
 from app.crud import  get_user_info
-
+from aiocache import cached
 router = APIRouter()
 
+@cached(ttl=600)
 @router.get("", response_model=UserSummary)
 def get_analytics(
     date: str = Query(..., description="Date in DDMMYYYY format"),

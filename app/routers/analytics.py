@@ -2,9 +2,10 @@ from fastapi import APIRouter, Query, HTTPException
 from datetime import datetime
 from app.schemas import AnalyticsResponse
 from app.crud import get_top_users_by_usage
-
+from aiocache import cached
 router = APIRouter()
 
+@cached(ttl=600)
 @router.get("", response_model=AnalyticsResponse)
 def get_analytics(
     date: str = Query(..., description="Date in DDMMYYYY format"),
