@@ -1,6 +1,8 @@
 from pydantic import BaseModel
 from typing import List
 
+from app.utils import format_duration
+
 class AnalyticsUser(BaseModel):
     username: str
     lastDayUsage: str
@@ -24,11 +26,6 @@ from datetime import datetime, timedelta
 from app.schemas import AnalyticsUser, UserSummary
 import math
 
-
-def format_duration(seconds: int) -> str:
-    hours = seconds // 3600
-    minutes = (seconds % 3600) // 60
-    return f"{hours}h{minutes:02d}m"
 
 
 def get_top_users_by_usage(ref_date: datetime, limit: int, page: int):
