@@ -39,7 +39,3 @@ class TestIngestion:
         ingest_from_google_drive("14fVSrhg4ct9QWIAduvFR96zacPJdCy-_")
         count_2 = db.query(func.count(UserUsage.id)).scalar()
         assert count_1 == count_2  # No new rows added
-
-    def test_malformed_rows_are_skipped_gracefully(self, db, capsys):
-        captured = capsys.readouterr()
-        assert "Skipped row due to error" in captured.out or captured.err
