@@ -38,7 +38,8 @@ pip install -r requirements.txt
 
 - Set your DB URL:
 
-```bash
+```
+create .env file and paste it there:
 export DATABASE_URL=postgresql://<user>:<pass>@<host>/<dbname>
 ```
 -Run the Service
