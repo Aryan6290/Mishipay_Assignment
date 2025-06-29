@@ -21,7 +21,7 @@ from sqlalchemy import func, case, and_
 from app.models import UserUsage
 from app.db import SessionLocal
 from datetime import datetime, timedelta
-from app.schemas import AnalyticsUser
+from app.schemas import AnalyticsUser, UserSummary
 import math
 
 
@@ -42,13 +42,15 @@ def get_top_users_by_usage(ref_date: datetime, limit: int, page: int):
         db.query(
             UserUsage.username,
             func.sum(
-                case([(UserUsage.start_time >= start_1, UserUsage.usage_seconds)], else_=0)
+            case((UserUsage.start_time >= start_1, UserUsage.usage_seconds), else_=0)
             ).label("day1"),
+
             func.sum(
-                case([(UserUsage.start_time >= start_7, UserUsage.usage_seconds)], else_=0)
+            case((UserUsage.start_time >= start_7, UserUsage.usage_seconds), else_=0)
             ).label("day7"),
+
             func.sum(
-                case([(UserUsage.start_time >= start_30, UserUsage.usage_seconds)], else_=0)
+            case((UserUsage.start_time >= start_30, UserUsage.usage_seconds), else_=0)
             ).label("day30")
         )
         .filter(UserUsage.start_time >= start_30, UserUsage.start_time <= ref_date)
@@ -80,3 +82,36 @@ def get_top_users_by_usage(ref_date: datetime, limit: int, page: int):
     ]
 
     return users, total_pages
+
+def get_user_info(username: str , ref_time:datetime):
+    db: Session = SessionLocal()
+    username = username.strip()
+    hour_1 = ref_time - timedelta(hours=1)
+    hour_6 = ref_time - timedelta(hours=6)
+    hour_24 = ref_time - timedelta(hours=24)
+
+    results = db.query(
+        func.sum(
+            case((UserUsage.start_time >= hour_1, UserUsage.usage_seconds), else_=0)
+        ).label("h1"),
+        func.sum(
+            case((UserUsage.start_time >= hour_6, UserUsage.usage_seconds), else_=0)
+        ).label("h6"),
+        func.sum(
+            case((UserUsage.start_time >= hour_24, UserUsage.usage_seconds), else_=0)
+        ).label("h24")
+    ).filter(
+        UserUsage.username == username,
+        UserUsage.start_time <= ref_time,
+        UserUsage.start_time >= hour_24
+    ).first()
+
+    db.close()
+
+    return UserSummary(
+        username=username,
+        lastHourUsage=format_duration(results.h1),
+        last6HourUsage=format_duration(results.h6),
+        last24HourUsage=format_duration(results.h24)
+    )
+

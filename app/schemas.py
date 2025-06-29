@@ -15,3 +15,13 @@ class AnalyticsResponse(BaseModel):
     pageSize: int
     page: int
     totalPages: int
+
+class UserSummary(BaseModel):
+    username: str
+    lastHourUsage: str
+    last6HourUsage: str
+    last24HourUsage: str
+
+class UserSearchResponse(BaseModel):
+    ok: bool
+    data: UserSummary
