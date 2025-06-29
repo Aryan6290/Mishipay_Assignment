@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime as dt
 
 from fastapi import APIRouter, HTTPException, Query
 from app.schemas import UserSummary
@@ -9,14 +9,17 @@ router = APIRouter()
 @cached(ttl=600)
 @router.get("", response_model=UserSummary)
 def get_analytics(
-    date: str = Query(..., description="Date in DDMMYYYY format"),
+    datetime: str = Query(..., description="Date in DDMMYYYY format"),
     username: str = Query(None, description="(Optional) Filter by username"),
 ):
     try:
-        reference_date = datetime.strptime(date, "%d%m%Y")
+        reference_date = dt.strptime(datetime, "%Y%m%dT%H%M")
     except ValueError:
         raise HTTPException(status_code=422, detail="Invalid date format. Use DDMMYYYY.")
 
-    userinfo = get_user_info(username,reference_date)
+    try:
+        userinfo = get_user_info(username,reference_date)
+    except Exception as e:
+        raise HTTPException(status_code=422, detail="Check correct formatß")
 
     return userinfo

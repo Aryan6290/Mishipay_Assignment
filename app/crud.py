@@ -1,30 +1,17 @@
 from pydantic import BaseModel
 from typing import List
 
-from app.utils import format_duration
-
-class AnalyticsUser(BaseModel):
-    username: str
-    lastDayUsage: str
-    last7DayUsage: str
-    last30DayUsage: str
-
-class AnalyticsResponse(BaseModel):
-    ok: bool
-    data: List[AnalyticsUser]
-    pageSize: int
-    page: int
-    totalPages: int
-
 
 # app/crud.py
 from sqlalchemy.orm import Session
-from sqlalchemy import func, case, and_
+from sqlalchemy import func, case
 from app.models import UserUsage
 from app.db import SessionLocal
 from datetime import datetime, timedelta
 from app.schemas import AnalyticsUser, UserSummary
 import math
+
+from app.utils import format_duration
 
 
 
