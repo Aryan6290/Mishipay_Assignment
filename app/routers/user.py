@@ -7,7 +7,7 @@ from aiocache import cached
 router = APIRouter()
 
 @cached(ttl=600)
-@router.get("", response_model=UserSummary)
+@router.get("/search", response_model=UserSummary)
 def get_analytics(
     datetime: str = Query(..., description="Date in DDMMYYYY format"),
     username: str = Query(None, description="(Optional) Filter by username"),
