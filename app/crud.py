@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 from app.schemas import AnalyticsUser, UserSummary
 import math
 
-from app.utils import format_duration
+from app.utils.time_utils import format_duration
 
 
 
